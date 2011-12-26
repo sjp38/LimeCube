@@ -108,7 +108,7 @@ public class ComposeMessageActivity extends ActionBarActivity {
                 if (resultCode == RESULT_OK) {
                     Log.d(TAG, "Return from suggestions");
                     String suggestion = data.getStringExtra(SuggestionsActivity.SUGGESTION_EXTRA);
-                    mMessageEditor.addText(suggestion);
+                    mMessageEditor.setText(suggestion);
                 }
                 break;
             default:
