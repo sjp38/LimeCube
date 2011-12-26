@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LimeCube</string>
+    <string name="contactsListActivityLabel">Lime message</string>
+    <string name="menu_action_send_message_title">Send message</string>
+    
+    <string name="composeMessageActivityLabel">Compose message</string>
+    <string name="hint_sms_edit_text">Enter text.</string>
+    <string name="message_compose_to">"To : "</string>
+    <string name="title_select_number_to_send">Select number to send text message.</string>
+    <string name="warning_select_contact_first_to_send_messages">Select contacts first to send messages.</string>
+    <string name="select_all">Select all</string>
+    <string name="clear_all_selection">Clear all selection</string>
+    <string name="menu_action_skip_this_number_title">Skip this number</string>
+    <string name="menu_action_compose_later_title">Compose later</string>
+
+    <string-array name="default_suggestions">
+        <item>Hello \\_NAME, How are you?</item>
+        <item>\\_NAME, long time no see.</item>
+    </string-array>
+    
+    <string name="suggestionsActivityLabel">Suggestions</string>
+    
+    <string-array name="suggestion_edit_menu">
+        <item>Edit</item>
+        <item>Remove</item>
+    </string-array>
+    <string name="suggestion_edit_dialog_title">Edit suggestion</string>
+    <string name="suggestion_add_dialog_title">Add suggestion</string>
+    <string name="dialog_positive_button">OK</string>
+    <string name="dialog_negative_button">Cancel</string>
+    <string name="warning_suggestion_should_not_empty">Suggestion should has word.</string>
+    <string name="failed_to_update_suggestion">Failed to edit. Maybe same suggestion already exist.</string>
+    <string name="failed_to_add_suggestion">Failed to add. Maybe same suggestion already exist.</string>
+    <string name="menu_action_add_suggestion_title">Add suggestion</string>
+    
+
+</resources>
