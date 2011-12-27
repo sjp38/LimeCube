@@ -14,6 +14,16 @@ public class LimeCoder {
             "\\_FIRSTONENAME", "\\_FIRSTTWONAME", "\\_FIRSTTHREENAME"
     };
 
+    private static final int SYMBOL_NAME_INT = 0;
+    private static final int SYMBOL_FIRST_NAME_INT = 1;
+    private static final int SYMBOL_LAST_NAME_INT = 2;
+    private static final int SYMBOL_LASTONENAME_INT = 3;
+    private static final int SYMBOL_LASTTWONAME_INT = 4;
+    private static final int SYMBOL_LASTTHREENAME_INT = 5;
+    private static final int SYMBOL_FIRSTONENAME_INT = 6;
+    private static final int SYMBOL_FIRSTTWONAME_INT = 7;
+    private static final int SYMBOL_FIRSTTHREENAME_INT = 8;
+
     private static final String SYMBOL_YA = "\\_YA";
     private static final String SYMBOL_DI = "야";
     private static final String SYMBOL_DK = "아";
@@ -25,10 +35,11 @@ public class LimeCoder {
             "야", "아", "형", "형님", "누나", "누님", "오빠", "언니", "아저씨",
             "씨", "군", "양", "사원", "사원님", "선임", "선임님", "책임님", "수석님", "선배", "선배님",
             "개발자", "개발자님", "디자이너", "디자이너님",
-            "대리", "대리님", "부장", "부장님", "과장", "과장님", "차장", "차장님", "기사", "기사님", "기자", "기자님", "대표님", "사장님", "사모님",
+            "대리", "대리님", "부장", "부장님", "과장", "과장님", "차장", "차장님", "기사", "기사님", "기자", "기자님", "대표님",
+            "사장님", "사모님",
             "교수", "교수님", "조교", "조교님", "박사", "박사님", "학부장", "학부장님",
             "선생", "선생님", "주임", "주임님", "교장", "교장 선생님", "장학사", "교육감", "교육감님", "교감", "교감 선생님",
-            "원장님" 
+            "원장님"
     };
 
     static public String encode(String text, String name) {
@@ -51,17 +62,6 @@ public class LimeCoder {
             }
         }
         return true;
-    }
-
-    static private String getFirstName(String name) {
-        final String[] token = name.split(" ");
-        return token[0];
-    }
-
-    static private String getLastName(String name) {
-        final String[] token = name.split(" ");
-        final int tokenSize = token.length;
-        return token[tokenSize - 1];
     }
 
     static private String encodeToken(String token, String name, boolean isKoreanName) {
@@ -90,23 +90,23 @@ public class LimeCoder {
         }
 
         if (isKoreanName) {
-            for (int i = 1; i < SYMBOL_NAME_TYPE.length + 1; i++) {
-                String splitName = name.substring(name.length() - i, name.length());
+            for (int i = 0; i < SYMBOL_NAME_TYPE.length; i++) {
+                String splitName = getSplitName(name, SYMBOL_LASTONENAME_INT + i);
                 if (token.equals(splitName)) {
-                    return replaceName(original, splitName, SYMBOL_NAME_TYPE[i - 1], yaExist);
+                    return replaceName(original, splitName, SYMBOL_NAME_TYPE[i], yaExist);
                 }
-                splitName = name.substring(0, i);
+                splitName = getSplitName(name, SYMBOL_FIRSTONENAME_INT + i);
                 if (token.equals(splitName)) {
-                    return replaceName(original, splitName, SYMBOL_NAME_REVERSE_TYPE[i - 1],
+                    return replaceName(original, splitName, SYMBOL_NAME_REVERSE_TYPE[i],
                             yaExist);
                 }
             }
         } else {
-            final String firstName = getFirstName(name);
+            final String firstName = getSplitName(name, SYMBOL_FIRST_NAME_INT);
             if (token.equals(firstName)) {
                 return original.replace(firstName, SYMBOL_FIRSTNAME);
             }
-            final String lastName = getLastName(name);
+            final String lastName = getSplitName(name, SYMBOL_LAST_NAME_INT);
             if (token.equals(lastName)) {
                 return original.replace(lastName, SYMBOL_LASTNAME);
             }
@@ -127,28 +127,55 @@ public class LimeCoder {
         return encoded;
     }
 
+    static private String getSplitName(String name, int nameType) {
+        if (nameType == SYMBOL_NAME_INT) {
+            return name;
+        } else if (nameType == SYMBOL_FIRST_NAME_INT || nameType == SYMBOL_LAST_NAME_INT) {
+            final String[] tokenByBlank = name.split(" ");
+            return nameType == SYMBOL_FIRST_NAME_INT ? tokenByBlank[0]
+                    : tokenByBlank[tokenByBlank.length - 1];
+        }
+
+        int splitStart = 0;
+        int splitEnd = name.length();
+        if (nameType >= SYMBOL_LASTONENAME_INT && nameType <= SYMBOL_LASTTHREENAME_INT) {
+            splitStart = name.length() - (nameType - SYMBOL_LASTONENAME_INT + 1);
+            if (splitStart < 0) {
+                splitStart = 0;
+            }
+            splitEnd = name.length();
+        } else if (nameType >= SYMBOL_FIRSTONENAME_INT && nameType <= SYMBOL_FIRSTTHREENAME_INT) {
+            splitStart = 0;
+            splitEnd = nameType - SYMBOL_FIRSTONENAME_INT + 1;
+            if (splitEnd > name.length() - 1) {
+                splitEnd = name.length();
+            }
+        }
+        return name.substring(splitStart, splitEnd);
+    }
+
     static public String decode(String text, String name) {
         text = text.replace(SYMBOL_NAME, name);
 
         final boolean isKoreanName = isKoreanName(name);
-        final String firstName = getFirstName(name);
-        final String lastName = getLastName(name);
+        final String firstName = getSplitName(name, SYMBOL_FIRST_NAME_INT);
+        final String lastName = getSplitName(name, SYMBOL_LAST_NAME_INT);
 
-        for (int i = 1; i < SYMBOL_NAME_TYPE.length + 1; i++) {
+        for (int i = 0; i < SYMBOL_NAME_TYPE.length; i++) {
             String splitName;
             if (isKoreanName) {
-                splitName = name.substring(name.length() - i, name.length());
+                splitName = getSplitName(name, SYMBOL_LASTONENAME_INT + i);
             } else {
                 splitName = firstName;
             }
-            text = text.replace(SYMBOL_NAME_TYPE[i - 1], splitName);
+            text = text.replace(SYMBOL_NAME_TYPE[i], splitName);
 
             if (isKoreanName) {
-                splitName = name.substring(0, i);
+                splitName = getSplitName(name, SYMBOL_FIRSTONENAME_INT + i);
             } else {
                 splitName = lastName;
             }
-            text = text.replace(SYMBOL_NAME_REVERSE_TYPE[i - 1], splitName);
+            text = text.replace(SYMBOL_NAME_REVERSE_TYPE[i], splitName);
         }
 
         String decoded = "";
