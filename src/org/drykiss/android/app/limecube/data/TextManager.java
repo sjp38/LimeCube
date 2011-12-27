@@ -47,7 +47,7 @@ public class TextManager {
             String[] defaultSuggestions = mContext.getResources().getStringArray(
                     R.array.default_suggestions);
             for (String suggestion : defaultSuggestions) {
-                mSuggestions.add(suggestion);
+                mSuggestions.add(0, suggestion);
             }
         }
         if (mDataLoaded) {
@@ -118,7 +118,7 @@ public class TextManager {
         if (mSuggestions.contains(suggestion)) {
             return false;
         }
-        mSuggestions.add(suggestion);
+        mSuggestions.add(0, suggestion);
         if (mSuggestions.size() > MAX_SUGGESTIONS) {
             mSuggestions.remove(0);
         }

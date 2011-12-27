@@ -161,8 +161,7 @@ public class ComposeMessageActivity extends ActionBarActivity {
         SimpleContact contact = DataManager.getInstance().getContact(
                 mTargetContacts[mCurrentContactIndex++]);
 
-        final int lastSuggestion = DataManager.getInstance().getSuggestionsCount() - 1;
-        final String suggestion = DataManager.getInstance().getSuggestion(lastSuggestion, contact);
+        final String suggestion = DataManager.getInstance().getSuggestion(0, contact);
         mMessageEditor.setText(suggestion);
 
         final QuickContactBadge quickContact = mQuickContact;
