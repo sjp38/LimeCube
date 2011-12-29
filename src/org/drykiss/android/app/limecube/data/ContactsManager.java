@@ -33,6 +33,13 @@ public class ContactsManager {
             ContactsContract.Contacts.PHOTO_ID
     };
 
+    private static final String[] SIMPLE_GROUP_MEMBER_PROJECTION = new String[] {
+            GroupMembership.CONTACT_ID,
+            ContactsContract.Contacts.LOOKUP_KEY,
+            ContactsContract.Contacts.DISPLAY_NAME,
+            ContactsContract.Contacts.PHOTO_ID
+    };
+
     private static final int SIMPLE_CONTACT_ID_COLUMN_INDEX = 0;
     private static final int SIMPLE_CONTACT_LOOKUP_KEY_COLUMN_INDEX = 1;
     private static final int SIMPLE_CONTACT_DISPLAY_NAME_COLUMN_INDEX = 2;
@@ -164,7 +171,7 @@ public class ContactsManager {
                     SIMPLE_CONTACT_SELECTION, null, SIMPLE_CONTACT_SORT_ORDER);
         } else {
             mQueryHandler.startQuery(QUERY_TOKEN_GROUP_MEMBER, null, GROUP_MEMBERS_URI,
-                    SIMPLE_CONTACT_PROJECTION, GROUP_MEMBERS_SELECTION, new String[] {
+                    SIMPLE_GROUP_MEMBER_PROJECTION, GROUP_MEMBERS_SELECTION, new String[] {
                         String.valueOf(mGroupId)
                     }, ContactsContract.Data.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
         }
