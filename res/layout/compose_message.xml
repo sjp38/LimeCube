@@ -4,70 +4,72 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <ScrollView android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_height="match_parent" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:text="@string/message_compose_to"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <QuickContactBadge
-                android:id="@+id/compose_message_quickContactBadge"
-                style="?android:attr/quickContactBadgeStyleWindowMedium"
-                android:layout_width="@dimen/photo_view_width"
-                android:layout_height="@dimen/photo_view_height"
-                android:src="@drawable/ic_contact_picture_holo_dark" />
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical" >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/compose_message_to_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dip"
+                    android:layout_gravity="top"
+                    android:text="@string/message_compose_to"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <TextView
-                    android:id="@+id/compose_message_to_number"
+                <QuickContactBadge
+                    android:id="@+id/compose_message_quickContactBadge"
+                    style="?android:attr/quickContactBadgeStyleWindowMedium"
+                    android:layout_width="@dimen/photo_view_width"
+                    android:layout_height="@dimen/photo_view_height"
+                    android:src="@drawable/ic_contact_picture_holo_dark" />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dip"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/compose_message_to_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dip"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/compose_message_to_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dip"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </LinearLayout>
             </LinearLayout>
+
+            <View
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginBottom="3dip"
+                android:layout_marginTop="3dip"
+                android:background="?android:attr/listDivider" />
+
+            <org.drykiss.android.app.limecube.widget.SmsEditWidget
+                android:id="@+id/compose_message_to_textEditWidget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dip"
+                android:layout_marginTop="5dip" />
         </LinearLayout>
-
-        <View
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="1dip"
-            android:layout_marginBottom="3dip"
-            android:layout_marginTop="3dip"
-            android:background="?android:attr/listDivider" />
-
-        <org.drykiss.android.app.limecube.widget.SmsEditWidget
-            android:id="@+id/compose_message_to_textEditWidget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="50dip" />
-    </LinearLayout>
     </ScrollView>
 
     <LinearLayout

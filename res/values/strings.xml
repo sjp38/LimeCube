@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">LimeCube</string>
+    <string name="app_name">Lime Message</string>
     <string name="contactsListActivityLabel">Lime message</string>
     <string name="menu_action_send_message_title">Send message</string>
-    
+    <string name="groupsListLabel">Groups list</string>
+    <string name="group_member_count"><xliff:g id="group_member_count">%s</xliff:g> people</string>
+
     <string name="composeMessageActivityLabel">Compose message</string>
     <string name="hint_sms_edit_text">Enter text.</string>
     <string name="message_compose_to">"To : "</string>
@@ -14,6 +16,9 @@
     <string name="clear_all_selection">Clear all selection</string>
     <string name="menu_action_skip_this_number_title">Skip this number</string>
     <string name="menu_action_compose_later_title">Compose later</string>
+    <string name="menu_action_contacts_list_title">Contacts list</string>
+    <string name="menu_action_groups_list_title">Groups list</string>
+    <string name="in_group">In <xliff:g id="group_member_count">%s</xliff:g> group</string>
 
     <string-array name="default_suggestions">
         <item>Hello \\_NAME, How are you?</item>

@@ -39,6 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,13 +57,13 @@ public class ActionBarHelperBase extends ActionBarHelper {
         super(activity);
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mActivity.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         mActivity.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
@@ -107,7 +108,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
         actionBarCompat.addView(titleText);
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void setRefreshActionItemState(boolean refreshing) {
         View refreshButton = mActivity.findViewById(R.id.actionbar_compat_item_refresh);
@@ -123,20 +124,30 @@ public class ActionBarHelperBase extends ActionBarHelper {
     }
 
     /**
-     * Action bar helper code to be run in {@link Activity#onCreateOptionsMenu(android.view.Menu)}.
-     *
-     * NOTE: This code will mark on-screen menu items as invisible.
+     * Action bar helper code to be run in
+     * {@link Activity#onCreateOptionsMenu(android.view.Menu)}. NOTE: This code
+     * will mark on-screen menu items as invisible.
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        final ArrayList<Integer> removedItems = new ArrayList<Integer>();
         // Hides on-screen action items from the options menu.
         for (Integer id : mActionItemIds) {
-            menu.findItem(id).setVisible(false);
+            final MenuItem item = menu.findItem(id);
+            if (item == null) {
+                removedItems.add(id);
+            } else {
+                item.setVisible(false);
+            }
+        }
+
+        for (Integer id : removedItems) {
+            mActionItemIds.remove(id);
         }
         return true;
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     protected void onTitleChanged(CharSequence title, int color) {
         TextView titleView = (TextView) mActivity.findViewById(R.id.actionbar_compat_title);
@@ -146,26 +157,29 @@ public class ActionBarHelperBase extends ActionBarHelper {
     }
 
     /**
-     * Returns a {@link android.view.MenuInflater} that can read action bar metadata on
-     * pre-Honeycomb devices.
+     * Returns a {@link android.view.MenuInflater} that can read action bar
+     * metadata on pre-Honeycomb devices.
      */
     public MenuInflater getMenuInflater(MenuInflater superMenuInflater) {
         return new WrappedMenuInflater(mActivity, superMenuInflater);
     }
 
     /**
-     * Returns the {@link android.view.ViewGroup} for the action bar on phones (compatibility action
-     * bar). Can return null, and will return null on Honeycomb.
+     * Returns the {@link android.view.ViewGroup} for the action bar on phones
+     * (compatibility action bar). Can return null, and will return null on
+     * Honeycomb.
      */
     private ViewGroup getActionBarCompat() {
         return (ViewGroup) mActivity.findViewById(R.id.actionbar_compat);
     }
 
     /**
-     * Adds an action button to the compatibility action bar, using menu information from a {@link
-     * android.view.MenuItem}. If the menu item ID is <code>menu_refresh</code>, the menu item's
-     * state can be changed to show a loading spinner using
-     * {@link com.example.android.actionbarcompat.ActionBarHelperBase#setRefreshActionItemState(boolean)}.
+     * Adds an action button to the compatibility action bar, using menu
+     * information from a {@link android.view.MenuItem}. If the menu item ID is
+     * <code>menu_refresh</code>, the menu item's state can be changed to show a
+     * loading spinner using
+     * {@link com.example.android.actionbarcompat.ActionBarHelperBase#setRefreshActionItemState(boolean)}
+     * .
      */
     private View addActionItemCompatFromMenuItem(final MenuItem item) {
         final int itemId = item.getItemId();
@@ -201,7 +215,8 @@ public class ActionBarHelperBase extends ActionBarHelper {
         actionBar.addView(actionButton);
 
         if (item.getItemId() == R.id.menu_refresh) {
-            // Refresh buttons should be stateful, and allow for indeterminate progress indicators,
+            // Refresh buttons should be stateful, and allow for indeterminate
+            // progress indicators,
             // so add those.
             ProgressBar indicator = new ProgressBar(mActivity, null,
                     R.attr.actionbarCompatProgressIndicatorStyle);
@@ -246,8 +261,10 @@ public class ActionBarHelperBase extends ActionBarHelper {
         }
 
         /**
-         * Loads action bar metadata from a menu resource, storing a list of menu item IDs that
-         * should be shown on-screen (i.e. those with showAsAction set to always or ifRoom).
+         * Loads action bar metadata from a menu resource, storing a list of
+         * menu item IDs that should be shown on-screen (i.e. those with
+         * showAsAction set to always or ifRoom).
+         * 
          * @param menuResId
          */
         private void loadActionBarMetadata(int menuResId) {

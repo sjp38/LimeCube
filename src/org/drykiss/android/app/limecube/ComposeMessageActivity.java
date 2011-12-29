@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import org.drykiss.android.app.limecube.data.SimpleContact;
 import org.drykiss.android.app.limecube.widget.SmsEditWidget;
 
 import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ComposeMessageActivity extends ActionBarActivity {
     private static final String TAG = "limeCube_compose_message";
@@ -77,10 +81,12 @@ public class ComposeMessageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.compose_message);
 
+        DataManager.getInstance().startSuggestionsLoading();
+
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Object[] received = (Object[]) bundle
-                .get(ContactsListActivity.CHECKED_CONTACTS_EXTRA_NAME);
+        final Object[] received = (Object[]) bundle
+                .get(ContactsListActivity.CHECKED_ITEMS_EXTRA_NAME);
         mTargetContacts = new Integer[received.length];
         for (int i = 0; i < received.length; i++) {
             mTargetContacts[i] = (Integer) received[i];
@@ -132,11 +138,12 @@ public class ComposeMessageActivity extends ActionBarActivity {
                 break;
             case R.id.menu_action_compose_later:
                 Integer[] targetContacts = new Integer[mTargetContacts.length];
-                System.arraycopy(mTargetContacts, 0, targetContacts, 0, mCurrentContactIndex-1);
-                System.arraycopy(mTargetContacts, mCurrentContactIndex, targetContacts, mCurrentContactIndex-1, mTargetContacts.length - mCurrentContactIndex);
-                targetContacts[mTargetContacts.length-1] = mTargetContacts[mCurrentContactIndex-1];
+                System.arraycopy(mTargetContacts, 0, targetContacts, 0, mCurrentContactIndex - 1);
+                System.arraycopy(mTargetContacts, mCurrentContactIndex, targetContacts,
+                        mCurrentContactIndex - 1, mTargetContacts.length - mCurrentContactIndex);
+                targetContacts[mTargetContacts.length - 1] = mTargetContacts[mCurrentContactIndex - 1];
                 mTargetContacts = targetContacts;
-                
+
                 mCurrentContactIndex--;
                 bindViewsToNextTarget();
                 break;
@@ -194,7 +201,9 @@ public class ComposeMessageActivity extends ActionBarActivity {
         }
         phones.close();
 
-        if (numbers.size() == 1) {
+        if (numbers.size() == 0) {
+            bindViewsToNextTarget();
+        } else if (numbers.size() == 1) {
             mNumber.setText(numbers.get(0));
         } else {
             Object[] array = numbers.toArray();
@@ -230,5 +239,4 @@ public class ComposeMessageActivity extends ActionBarActivity {
 
         builder.show();
     }
-
 }

@@ -2,9 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_action_contacts_list"
+        android:icon="@drawable/ic_contacts_holo_dark"
+        android:showAsAction="always"
+        android:title="@string/menu_action_contacts_list_title"/>
+    <item
+        android:id="@+id/menu_action_groups_list"
+        android:icon="@drawable/ic_groups_holo_dark"
+        android:showAsAction="always"
+        android:title="@string/menu_action_groups_list_title"/>
+    <item
         android:id="@+id/menu_action_send_message"
         android:icon="@drawable/ic_send"
-        android:orderInCategory="0"
         android:showAsAction="always"
         android:title="@string/menu_action_send_message_title"/>
 

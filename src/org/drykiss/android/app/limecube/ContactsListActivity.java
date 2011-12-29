@@ -1,14 +1,8 @@
 
 package org.drykiss.android.app.limecube;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.ContactsContract.Contacts;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,29 +11,36 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.QuickContactBadge;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
 
+import org.drykiss.android.app.limecube.ContactsListActivity.SelectableAdapterBase.OnItemClickListener;
 import org.drykiss.android.app.limecube.ad.AdvertisementManager;
 import org.drykiss.android.app.limecube.data.ContactsManager.OnContactsDataChangedListener;
 import org.drykiss.android.app.limecube.data.DataManager;
-import org.drykiss.android.app.limecube.data.SimpleContact;
+import org.drykiss.android.app.limecube.data.Group;
+import org.drykiss.android.app.limecube.data.GroupsManager.OnGroupsDataChangedListener;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class ContactsListActivity extends ActionBarActivity {
-    private static final String TAG = "lomeCube_contacts_list";
-    public static final String CHECKED_CONTACTS_EXTRA_NAME = "checkedContacts";
+    private static final String TAG = "limeCube_contacts_list";
+    public static final String CHECKED_ITEMS_EXTRA_NAME = "checkedItems";
+    private static final String EXTRA_MODE_NAME = "extra_mode";
+    private static final String EXTRA_GROUP_ID = "extra_group_id";
+
+    private static final int MODE_CONTACTS = 0;
+    private static final int MODE_GROUPS = 1;
+
+    private int mMode = MODE_CONTACTS;
+    private long mGroupId = -1;
     private ListView mContactsList = null;
-    private ContactsListAdapter mAdapter = null;
-    private SortedSet<Integer> mCheckedContacts = new TreeSet<Integer>();
+    private SelectableAdapterBase mAdapter = null;
     private CheckBox mSelectAllCheckBox;
 
     private View mAdView;
@@ -47,23 +48,38 @@ public class ContactsListActivity extends ActionBarActivity {
     private OnContactsDataChangedListener mListener = new OnContactsDataChangedListener() {
         @Override
         public void onContactsDataChanged() {
-            mAdapter.notifyDataSetChanged();
+            if (mMode == MODE_CONTACTS) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    private OnGroupsDataChangedListener mGroupsListener = new OnGroupsDataChangedListener() {
+        @Override
+        public void onGroupsDataChanged() {
+            if (mMode == MODE_GROUPS) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    private OnItemClickListener mGroupsListItemClickedListener = new OnItemClickListener() {
+        @Override
+        public void onItemClicked(int position) {
+            Group group = DataManager.getInstance().getGroup(position);
+            startNewMode(MODE_CONTACTS, group.mId);
         }
     };
 
     private OnCheckedChangeListener mSelectAllListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton view, boolean isChecked) {
-            mCheckedContacts.clear();
+            mAdapter.setAllSelected(isChecked);
             if (isChecked) {
-                for (int i = 0; i < DataManager.getInstance().getContactsCount(); i++) {
-                    mCheckedContacts.add(i);
-                }
                 view.setText(R.string.clear_all_selection);
             } else {
                 view.setText(R.string.select_all);
             }
-            mAdapter.notifyDataSetChanged();
         }
     };
 
@@ -75,15 +91,33 @@ public class ContactsListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts_list);
 
-        DataManager.getInstance().setContext(getApplicationContext());
-        DataManager.getInstance().startDataLoading();
-        DataManager.getInstance().setOnContactsDataChangedListener(mListener);
+        final int mode = getIntent().getIntExtra(EXTRA_MODE_NAME, MODE_CONTACTS);
+        mMode = mode;
+        final long groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, -1);
+        mGroupId = groupId;
 
         mSelectAllCheckBox = (CheckBox) findViewById(R.id.contactslistSelectAllCheckBox);
         mSelectAllCheckBox.setOnCheckedChangeListener(mSelectAllListener);
 
+        DataManager.getInstance().setContext(getApplicationContext());
+        if (mode == MODE_GROUPS) {
+            setTitle(R.string.groupsListLabel);
+            mSelectAllCheckBox.setVisibility(View.GONE);
+            DataManager.getInstance().startGroupsDataLoading();
+            DataManager.getInstance().setOnGroupsDataChangedListener(mGroupsListener);
+        } else {
+            if (mGroupId >= 0) {
+                setTitle(DataManager.getInstance().getGroupTitle(groupId));
+            }
+            DataManager.getInstance().startContactsLoading(groupId);
+            DataManager.getInstance().setOnContactsDataChangedListener(mListener);
+        }
+
         mContactsList = (ListView) findViewById(R.id.contactslistView);
-        mAdapter = new ContactsListAdapter(this);
+        mAdapter = getListAdapter();
+        if (mode == MODE_GROUPS) {
+            mAdapter.setOnItemClickListener(mGroupsListItemClickedListener);
+        }
         mContactsList.setAdapter(mAdapter);
         mContactsList.setClickable(true);
 
@@ -92,26 +126,71 @@ public class ContactsListActivity extends ActionBarActivity {
         adLayout.addView(mAdView);
     }
 
+    SelectableAdapterBase getListAdapter() {
+        if (mMode == MODE_GROUPS) {
+            return new GroupsListAdapter(this);
+        }
+        return new ContactsListAdapter(this);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         AdvertisementManager.destroyAd(mAdView);
-        DataManager.getInstance().stopDataLoading();
+        if (mMode == MODE_GROUPS) {
+            DataManager.getInstance().stopGroupsDataLoading();
+        } else {
+            DataManager.getInstance().stopContactsDataLoading();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mMode == MODE_GROUPS) {
+            startNewMode(MODE_CONTACTS, -1);
+        } else if (mMode == MODE_CONTACTS && mGroupId >= 0) {
+            startNewMode(MODE_GROUPS, -1);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.contacts_list_activity_menu, menu);
+        if (mMode == MODE_CONTACTS) {
+            if (mGroupId == -1) {
+                menu.removeItem(R.id.menu_action_contacts_list);
+            }
+        } else if (mMode == MODE_GROUPS) {
+            menu.removeItem(R.id.menu_action_groups_list);
+            menu.removeItem(R.id.menu_action_send_message);
+        }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void startNewMode(int newMode, long groupId) {
+        final Intent newIntent = new Intent(this, ContactsListActivity.class);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        newIntent.putExtra(EXTRA_MODE_NAME, newMode);
+        newIntent.putExtra(EXTRA_GROUP_ID, groupId);
+        startActivity(newIntent);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_action_contacts_list:
+                startNewMode(MODE_CONTACTS, -1);
+                break;
+            case R.id.menu_action_groups_list:
+                startNewMode(MODE_GROUPS, -1);
+                break;
             case R.id.menu_action_send_message:
-                if (mCheckedContacts.size() <= 0) {
+                SortedSet<Integer> checkedItems = mAdapter.getSelectedItems();
+                if (checkedItems.size() <= 0) {
                     Toast.makeText(
                             this,
                             R.string.warning_select_contact_first_to_send_messages,
@@ -120,11 +199,9 @@ public class ContactsListActivity extends ActionBarActivity {
                 }
                 Intent intent = new Intent(this, ComposeMessageActivity.class);
 
-                intent.putExtra(CHECKED_CONTACTS_EXTRA_NAME,
-                        mCheckedContacts.toArray());
-                mCheckedContacts.clear();
-                mAdapter.notifyDataSetChanged();
+                intent.putExtra(CHECKED_ITEMS_EXTRA_NAME, checkedItems.toArray());
                 startActivity(intent);
+                mAdapter.setAllSelected(false);
                 break;
             default:
                 break;
@@ -132,100 +209,71 @@ public class ContactsListActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class ContactsListAdapter extends BaseAdapter {
-        private LayoutInflater mLayoutInflater = null;
+    public static class SelectableAdapterBase extends BaseAdapter {
+        private SortedSet<Integer> mSelectedItems = new TreeSet<Integer>();
+        private OnItemClickListener mListener = null;
 
-        public ContactsListAdapter(Context context) {
+        protected SelectableAdapterBase() {
             super();
-            mLayoutInflater = LayoutInflater.from(context);
         }
 
         @Override
         public int getCount() {
-            return DataManager.getInstance().getContactsCount();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View contactListItem;
-            ContactListItemViewHolder holder;
-            if (convertView == null) {
-                contactListItem = mLayoutInflater.inflate(
-                        R.layout.contact_list_item, null, false);
-                holder = new ContactListItemViewHolder();
-                holder.mName = (TextView) contactListItem
-                        .findViewById(R.id.contact_item_name);
-                holder.mCheckBox = (CheckBox) contactListItem
-                        .findViewById(R.id.contact_item_checkBox);
-                holder.mQuickContact = (QuickContactBadge) contactListItem
-                        .findViewById(R.id.contact_item_quickContactBadge);
-                contactListItem.setTag(holder);
-                contactListItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ContactListItemViewHolder holder = (ContactListItemViewHolder) v
-                                .getTag();
-                        final CheckBox checkBox = holder.mCheckBox;
-                        checkBox.setChecked(!checkBox.isChecked());
-                        if (checkBox.isChecked()) {
-                            mCheckedContacts.add(holder.mPosition);
-                        } else {
-                            mCheckedContacts.remove(holder.mPosition);
-                        }
-                    }
-                });
-            } else {
-                contactListItem = convertView;
-                holder = (ContactListItemViewHolder) contactListItem.getTag();
-            }
-
-            final SimpleContact contact = DataManager.getInstance().getContact(
-                    position);
-
-            holder.mPosition = position;
-
-            holder.mCheckBox.setChecked(mCheckedContacts.contains(position));
-            holder.mName.setText(contact.mName);
-
-            final QuickContactBadge quickContact = holder.mQuickContact;
-            quickContact.assignContactUri(Contacts.getLookupUri(contact.mId,
-                    contact.mLookupKey));
-
-            final byte[] data = contact.mPhoto;
-            if (data != null) {
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
-                            data.length);
-                    quickContact.setImageBitmap(bitmap);
-                } catch (OutOfMemoryError e) {
-                    Log.d(TAG, "OutOfMemory while decode photo");
-                    quickContact
-                            .setImageResource(R.drawable.ic_contact_picture_holo_dark);
-                    // Photo will appear to be missing
-                }
-            } else {
-                quickContact
-                        .setImageResource(R.drawable.ic_contact_picture_holo_dark);
-            }
-
-            return contactListItem;
+            return 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return DataManager.getInstance().getContact(position);
+            return null;
         }
 
         @Override
         public long getItemId(int position) {
-            return position;
+            return 0;
         }
 
-        private class ContactListItemViewHolder {
-            int mPosition;
-            CheckBox mCheckBox;
-            TextView mName;
-            QuickContactBadge mQuickContact;
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
+        }
+
+        public boolean isSelected(int position) {
+            return mSelectedItems.contains(position);
+        }
+
+        public SortedSet<Integer> getSelectedItems() {
+            return mSelectedItems;
+        }
+
+        public void setSelected(int position, boolean selected) {
+            if (selected) {
+                mSelectedItems.add(position);
+            } else {
+                mSelectedItems.remove(position);
+            }
+            notifyDataSetChanged();
+        }
+
+        public void setAllSelected(boolean all) {
+            mSelectedItems.clear();
+            if (all) {
+                for (int i = 0; i < getCount(); i++) {
+                    mSelectedItems.add(i);
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        public void setOnItemClickListener(OnItemClickListener listener) {
+            mListener = listener;
+        }
+
+        protected void notifyItemClicked(int position) {
+            mListener.onItemClicked(position);
+        }
+
+        public interface OnItemClickListener {
+            public void onItemClicked(int position);
         }
     }
 }

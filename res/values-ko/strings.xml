@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">라임 메세지</string>
     <string name="contactsListActivityLabel">라임 메세지</string>
     <string name="menu_action_send_message_title">메세지 발송</string>
-    
+    <string name="groupsListLabel">그룹 목록</string>
+    <string name="group_member_count"><xliff:g id="group_member_count">%s</xliff:g> 명</string>
+
     <string name="composeMessageActivityLabel">메세지 작성</string>
     <string name="hint_sms_edit_text">메세지를 입력하세요.</string>
     <string name="message_compose_to">"To : "</string>
     <string name="title_select_number_to_send">상대방 번호를 선택하세요.</string>
     <string name="warning_select_contact_first_to_send_messages">메세지를 보낼 상대를 먼저 선택해 주세요..</string>
+    <string name="select_all">전체 선택</string>
+    <string name="clear_all_selection">전체 선택 해제</string>
+    <string name="menu_action_skip_this_number_title">이 번호 건너뛰기</string>
+    <string name="menu_action_compose_later_title">나중에 작성하기</string>
+    <string name="menu_action_contacts_list_title">연락처 리스트</string>
+    <string name="menu_action_groups_list_title">그룹 리스트</string>
+    <string name="in_group"><xliff:g id="group_member_count">%s</xliff:g> 그룹</string>
 
     <string-array name="default_suggestions">
         <item>\\_LASTTWONAME\\_YA, 잘 지내니? 괜히 \\_NAME 네 생각나네.</item>
@@ -22,7 +31,7 @@
         <item>\\_NAME 님, 다가오는 임진년에는 용처럼 솟아오르시기를 희망합니다.</item>
         <item>\\_LASTTWONAME씨 오랜만입니다. 날씨도 추운데 건강 잘 챙기세영. 보고싶네염. 야호 뿌잉뿌잉*^^*.</item>
     </string-array>
-    
+
     <string name="suggestionsActivityLabel">추천 메세지</string>
     
     <string-array name="suggestion_edit_menu">

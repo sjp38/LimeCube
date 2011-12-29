@@ -1,21 +1,19 @@
 
 package org.drykiss.android.app.limecube.data;
 
-import java.util.ArrayList;
-
 public class Group {
-    public String mName;
-    public ArrayList<Long> mMembers = new ArrayList<Long>();
-    public ArrayList<String> mMessages = new ArrayList<String>();
+    public long mId;
+    public int mMemberCount;
+    public String mAccountType;
+    public String mAccountName;
+    public String mTitle;
 
-    public Group(String name) {
-        mName = name;
-    }
-
-    public Group(String name, ArrayList<Long> members, ArrayList<String> messages) {
-        mName = name;
-        mMembers = members;
-        mMessages = messages;
+    public Group(long id, int memberCount, String accountType, String accountName, String title) {
+        mId = id;
+        mMemberCount = memberCount;
+        mAccountType = accountType;
+        mAccountName = accountName;
+        mTitle = title;
     }
 
 }
