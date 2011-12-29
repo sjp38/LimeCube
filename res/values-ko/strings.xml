@@ -18,7 +18,6 @@
     <string name="menu_action_compose_later_title">나중에 작성하기</string>
     <string name="menu_action_contacts_list_title">연락처 리스트</string>
     <string name="menu_action_groups_list_title">그룹 리스트</string>
-    <string name="in_group"><xliff:g id="group_member_count">%s</xliff:g> 그룹</string>
 
     <string-array name="default_suggestions">
         <item>\\_LASTTWONAME\\_YA, 잘 지내니? 괜히 \\_NAME 네 생각나네.</item>
