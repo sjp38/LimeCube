@@ -2,7 +2,6 @@
 package org.drykiss.android.app.limecube;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +67,6 @@ public class GroupsListAdapter extends ContactsListActivity.SelectableAdapterBas
             groupListItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("sj38.park_test", "got cha!!!");
                     final GroupListItemViewHolder holder = (GroupListItemViewHolder) v.getTag();
                     notifyItemClicked(holder.mPosition);
                 }
