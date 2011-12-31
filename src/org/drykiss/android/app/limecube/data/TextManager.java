@@ -116,7 +116,7 @@ public class TextManager {
     public boolean addSuggestion(String suggestion, SimpleContact contact) {
         suggestion = LimeCoder.encode(suggestion, contact.mName);
         if (mSuggestions.contains(suggestion)) {
-            return false;
+            mSuggestions.remove(suggestion);
         }
         mSuggestions.add(0, suggestion);
         if (mSuggestions.size() > MAX_SUGGESTIONS) {
