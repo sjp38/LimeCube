@@ -59,6 +59,8 @@ public class ContactsManager {
     private ArrayList<SimpleContact> mContacts = new ArrayList<SimpleContact>();
     private ArrayList<SimpleContact> mGroupMembers = new ArrayList<SimpleContact>();
 
+    private boolean mGroupMembersLoading = false;
+
     private ContactsQueryHandler mQueryHandler = null;
     private ContactsPhotoManager mContactsPhotoManager = null;
 
@@ -118,6 +120,7 @@ public class ContactsManager {
     }
 
     public void startLoading(long groupId) {
+        mGroupMembersLoading = true;
         mGroupId = groupId;
         loadContacts();
         registerContentObserver();
@@ -134,7 +137,7 @@ public class ContactsManager {
     public SimpleContact get(int position) {
         final SimpleContact contact;
         if (mGroupId >= 0) {
-            if (position >= mGroupMembers.size()) {
+            if (mGroupMembersLoading || position >= mGroupMembers.size()) {
                 return null;
             }
             contact = mGroupMembers.get(position);
@@ -150,6 +153,9 @@ public class ContactsManager {
 
     public int getContactsCount() {
         if (mGroupId >= 0) {
+            if (mGroupMembersLoading) {
+                return 0;
+            }
             return mGroupMembers.size();
         }
         return mContacts.size();
@@ -224,6 +230,7 @@ public class ContactsManager {
                     mContactsMap = newContactsMap;
                 } else {
                     mGroupMembers = newContacts;
+                    mGroupMembersLoading = false;
                 }
                 return true;
             }
