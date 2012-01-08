@@ -25,6 +25,7 @@ public class ContactsPhotoManager implements Callback {
     private final static int CACHE_CLEAR_SIZE = 30;
     private ArrayList<Request> mRequests = new ArrayList<Request>();
     private HashMap<Long, PhotoHolder> mCache = new HashMap<Long, PhotoHolder>();
+    private ArrayList<Long> mFlushCandidates = new ArrayList<Long>();
     private HashMap<Long, Long> mNoPhotoCache = new HashMap<Long, Long>();
     private OnPhotoLoadedListener mListener = null;
     private PhotoLoaderThread mLoaderThread = null;
@@ -144,14 +145,13 @@ public class ContactsPhotoManager implements Callback {
                 cursor.close();
                 final PhotoHolder photoHolder = new PhotoHolder(photo, contactId);
                 mCache.put(contactId, photoHolder);
+                if (!mFlushCandidates.contains(contactId)) {
+                    mFlushCandidates.add(contactId);
+                }
                 if (mCache.size() > CACHE_MAX_SIZE) {
-                    Set<Long> keySet = mCache.keySet();
-                    int i = 0;
-                    for (Long key : keySet) {
-                        mCache.remove(key);
-                        if (++i >= CACHE_CLEAR_SIZE) {
-                            break;
-                        }
+                    for (int i = 0; i < CACHE_CLEAR_SIZE; i++) {
+                        mCache.remove(mFlushCandidates.get(0));
+                        mFlushCandidates.remove(0);
                     }
                 }
                 final Message msg = new Message();
