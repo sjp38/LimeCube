@@ -2,9 +2,8 @@
 <resources>
 
     <dimen name="actionbar_compat_height">46dp</dimen>
-    <dimen name="photo_view_height">64dip</dimen>
-    <dimen name="photo_view_width">64dip</dimen>
     <dimen name="actionbar_compat_button_width">46dp</dimen>
     <dimen name="actionbar_compat_button_home_width">49dp</dimen>
+    <dimen name="quickContactMargin">3dip</dimen>
 
 </resources>

@@ -24,8 +24,7 @@
     <QuickContactBadge
         android:id="@+id/contact_item_quickContactBadge"
         style="?android:attr/quickContactBadgeStyleWindowMedium"
-        android:layout_width="@dimen/photo_view_width"
-        android:layout_height="@dimen/photo_view_height"
+        android:layout_margin="@dimen/quickContactMargin"
         android:src="@drawable/ic_contact_picture_holo_dark" />
 
 </LinearLayout>
