@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_holo_dark"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -13,7 +14,8 @@
             android:id="@+id/suggestionslistView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="55dip" >
+            android:layout_marginBottom="55dip"
+            android:cacheColorHint="#00000000" >
         </ListView>
 
         <LinearLayout
