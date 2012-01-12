@@ -15,8 +15,9 @@ import android.widget.TextView;
 
 import org.drykiss.android.app.limecube.data.DataManager;
 import org.drykiss.android.app.limecube.data.SimpleContact;
+import org.drykiss.android.app.limecube.widget.AbstractCheckableAdapter;
 
-public class ContactsListAdapter extends ContactsListActivity.SelectableAdapterBase {
+public class ContactsListAdapter extends AbstractCheckableAdapter {
     private static final String TAG = "LimeCube_ContactsListAdapter";
 
     private LayoutInflater mLayoutInflater = null;

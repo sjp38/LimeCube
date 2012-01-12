@@ -7,8 +7,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -18,15 +16,15 @@ import android.widget.Toast;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
 
-import org.drykiss.android.app.limecube.ContactsListActivity.SelectableAdapterBase.OnItemClickListener;
 import org.drykiss.android.app.limecube.ad.AdvertisementManager;
 import org.drykiss.android.app.limecube.data.ContactsManager.OnContactsDataChangedListener;
 import org.drykiss.android.app.limecube.data.DataManager;
 import org.drykiss.android.app.limecube.data.Group;
 import org.drykiss.android.app.limecube.data.GroupsManager.OnGroupsDataChangedListener;
+import org.drykiss.android.app.limecube.widget.AbstractCheckableAdapter;
+import org.drykiss.android.app.limecube.widget.AbstractCheckableAdapter.OnItemClickedListener;
 
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class ContactsListActivity extends ActionBarActivity {
     private static final String TAG = "limeCube_contacts_list";
@@ -40,7 +38,7 @@ public class ContactsListActivity extends ActionBarActivity {
     private int mMode = MODE_CONTACTS;
     private long mGroupId = -1;
     private ListView mContactsList = null;
-    private SelectableAdapterBase mAdapter = null;
+    private AbstractCheckableAdapter mAdapter = null;
     private CheckBox mSelectAllCheckBox;
 
     private View mAdView;
@@ -63,7 +61,7 @@ public class ContactsListActivity extends ActionBarActivity {
         }
     };
 
-    private OnItemClickListener mGroupsListItemClickedListener = new OnItemClickListener() {
+    private OnItemClickedListener mGroupsListItemClickedListener = new OnItemClickedListener() {
         @Override
         public void onItemClicked(int position) {
             Group group = DataManager.getInstance().getGroup(position);
@@ -116,7 +114,7 @@ public class ContactsListActivity extends ActionBarActivity {
         mContactsList = (ListView) findViewById(R.id.contactslistView);
         mAdapter = getListAdapter();
         if (mode == MODE_GROUPS) {
-            mAdapter.setOnItemClickListener(mGroupsListItemClickedListener);
+            mAdapter.setOnItemClickedListener(mGroupsListItemClickedListener);
         }
         mContactsList.setAdapter(mAdapter);
         mContactsList.setClickable(true);
@@ -126,7 +124,7 @@ public class ContactsListActivity extends ActionBarActivity {
         adLayout.addView(mAdView);
     }
 
-    SelectableAdapterBase getListAdapter() {
+    AbstractCheckableAdapter getListAdapter() {
         if (mMode == MODE_GROUPS) {
             return new GroupsListAdapter(this);
         }
@@ -207,73 +205,5 @@ public class ContactsListActivity extends ActionBarActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public static class SelectableAdapterBase extends BaseAdapter {
-        private SortedSet<Integer> mSelectedItems = new TreeSet<Integer>();
-        private OnItemClickListener mListener = null;
-
-        protected SelectableAdapterBase() {
-            super();
-        }
-
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
-        }
-
-        public boolean isSelected(int position) {
-            return mSelectedItems.contains(position);
-        }
-
-        public SortedSet<Integer> getSelectedItems() {
-            return mSelectedItems;
-        }
-
-        public void setSelected(int position, boolean selected) {
-            if (selected) {
-                mSelectedItems.add(position);
-            } else {
-                mSelectedItems.remove(position);
-            }
-            notifyDataSetChanged();
-        }
-
-        public void setAllSelected(boolean all) {
-            mSelectedItems.clear();
-            if (all) {
-                for (int i = 0; i < getCount(); i++) {
-                    mSelectedItems.add(i);
-                }
-            }
-            notifyDataSetChanged();
-        }
-
-        public void setOnItemClickListener(OnItemClickListener listener) {
-            mListener = listener;
-        }
-
-        protected void notifyItemClicked(int position) {
-            mListener.onItemClicked(position);
-        }
-
-        public interface OnItemClickListener {
-            public void onItemClicked(int position);
-        }
     }
 }

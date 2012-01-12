@@ -12,8 +12,9 @@ import android.widget.TextView;
 
 import org.drykiss.android.app.limecube.data.DataManager;
 import org.drykiss.android.app.limecube.data.Group;
+import org.drykiss.android.app.limecube.widget.AbstractCheckableAdapter;
 
-public class GroupsListAdapter extends ContactsListActivity.SelectableAdapterBase {
+public class GroupsListAdapter extends AbstractCheckableAdapter {
     private static final String TAG = "LimeCube_ContactsListAdapter";
 
     private LayoutInflater mLayoutInflater = null;
