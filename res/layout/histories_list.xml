@@ -5,26 +5,14 @@
     android:background="@drawable/background_holo_dark"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/historiesListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <CheckBox
-            android:id="@+id/messageComposingItemsSelectAllCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select_all" />
-
-        <ListView
-            android:id="@+id/messageComposingItemslistView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="55dip"
-            android:cacheColorHint="#00000000"
-            android:drawSelectorOnTop="true" >
-        </ListView>
-    </LinearLayout>
+        android:layout_marginBottom="55dip"
+        android:cacheColorHint="#00000000"
+        android:drawSelectorOnTop="true" >
+    </ListView>
 
     <LinearLayout
         android:id="@+id/advertiseLayout"

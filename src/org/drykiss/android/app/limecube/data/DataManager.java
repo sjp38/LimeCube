@@ -5,6 +5,7 @@ import android.content.Context;
 
 import org.drykiss.android.app.limecube.data.ContactsManager.OnContactsDataChangedListener;
 import org.drykiss.android.app.limecube.data.GroupsManager.OnGroupsDataChangedListener;
+import org.drykiss.android.app.limecube.data.HistoryManager.OnHistoryChangedListener;
 import org.drykiss.android.app.limecube.data.TextManager.OnSuggestionChangedListener;
 
 public class DataManager {
@@ -14,6 +15,7 @@ public class DataManager {
     private ContactsManager mContactsManager = null;
     private TextManager mTextManager = null;
     private GroupsManager mGroupsManager = null;
+    private HistoryManager mHistoryManager = null;
 
     private DataManager() {
     }
@@ -58,6 +60,13 @@ public class DataManager {
             mTextManager = new TextManager(mContext);
         }
         mTextManager.loadSuggestions();
+    }
+
+    public void startHistoryLoading() {
+        if (mHistoryManager == null) {
+            mHistoryManager = new HistoryManager();
+        }
+        mHistoryManager.loadHistories();
     }
 
     public void stopContactsDataLoading() {
@@ -130,5 +139,40 @@ public class DataManager {
 
     public void setOnSuggestionChangedListener(OnSuggestionChangedListener listener) {
         mTextManager.setOnSuggestionChangedListener(listener);
+    }
+
+    public History getHistory(int position) {
+        if (mHistoryManager == null) {
+            startHistoryLoading();
+        }
+        return mHistoryManager.getHistory(position);
+    }
+
+    public int getHistoriesCount() {
+        if (mHistoryManager == null) {
+            startHistoryLoading();
+        }
+        return mHistoryManager.getHistoriesCount();
+    }
+
+    public boolean addHistory(History history) {
+        if (mHistoryManager == null) {
+            startHistoryLoading();
+        }
+        return mHistoryManager.addHistory(history);
+    }
+
+    public boolean removeHistory(int position) {
+        if (mHistoryManager == null) {
+            startHistoryLoading();
+        }
+        return mHistoryManager.removeHistory(position);
+    }
+
+    public void setOnHistoryChangedListener(OnHistoryChangedListener listener) {
+        if (mHistoryManager == null) {
+            startHistoryLoading();
+        }
+        mHistoryManager.setOnHistoryChangedListener(listener);
     }
 }

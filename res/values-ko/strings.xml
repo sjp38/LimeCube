@@ -18,6 +18,8 @@
     <string name="menu_action_compose_later_title">나중에 작성하기</string>
     <string name="menu_action_contacts_list_title">연락처 리스트</string>
     <string name="menu_action_groups_list_title">그룹 리스트</string>
+    <string name="menu_action_recent_history_title">최근 기록</string>
+    <string name="warning_bulk_transfer">"선택한 연락처 전체에게 아래의 메세지를 한번에 보냅니다. 하지만, 일부 기기(Sky Vega 등)에서는 제조사의 수정된 소프트웨어로 인해 이상하게 동작할 수 있습니다.\n이 기능을 사용해 보낸 메세지는 기본 메세지 앱에서는 확인이 안되고, 이 앱(라임메세지)의 기록 화면에서 확인 가능합니다. 사용 전에 테스트를 조금 해보시길 권합니다."</string>
 
     <string-array name="default_suggestions">
         <item>\\_LASTTWONAME\\_YA, 잘 지내니? 괜히 \\_NAME 네 생각나네.</item>
@@ -45,5 +47,14 @@
     <string name="failed_to_update_suggestion">메세지를 수정하는데 실패했습니다. 동일한 추천 메세지가 있을 수 있습니다.</string>
     <string name="failed_to_add_suggestion">메세지를 추가하는데 실패했습니다. 동일한 추천 메세지가 있을 수 있습니다.</string>
     <string name="menu_action_add_suggestion_title">추천 메세지 추가</string>
+
+    <string name="historyActivityLabel">기록</string>
+    <string name="history_message_sent">전송 성공.</string>
+    <string name="history_failed_to_send_message">전송 실패.</string>
     
+    <string-array name="history_menu">
+        <item>기록 삭제</item>
+        <item>메세지 재전송</item>
+    </string-array>
+
 </resources>

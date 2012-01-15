@@ -57,6 +57,8 @@ public class SuggestionsActivity extends ActionBarActivity {
         public void onClick(View v) {
             SuggestionListItemViewHolder holder = (SuggestionListItemViewHolder) v.getTag();
             String selected = holder.mSuggestion.getText().toString();
+            DataManager.getInstance().addSuggestion(selected, mContact);
+
             Intent intent = new Intent();
             intent.putExtra(SUGGESTION_EXTRA, selected);
             setResult(RESULT_OK, intent);

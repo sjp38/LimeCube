@@ -186,6 +186,10 @@ public class ContactsListActivity extends ActionBarActivity {
             case R.id.menu_action_groups_list:
                 startNewMode(MODE_GROUPS, -1);
                 break;
+            case R.id.menu_action_history:
+                Intent historyIntent = new Intent(this, HistoryActivity.class);
+                startActivity(historyIntent);
+                break;
             case R.id.menu_action_send_message:
                 SortedSet<Integer> checkedItems = mAdapter.getSelectedItems();
                 if (checkedItems.size() <= 0) {
@@ -200,6 +204,8 @@ public class ContactsListActivity extends ActionBarActivity {
                 intent.putExtra(CHECKED_ITEMS_EXTRA_NAME, checkedItems.toArray());
                 startActivity(intent);
                 mAdapter.setAllSelected(false);
+                mSelectAllCheckBox.setChecked(false);
+                mSelectAllCheckBox.setText(R.string.select_all);
                 break;
             default:
                 break;

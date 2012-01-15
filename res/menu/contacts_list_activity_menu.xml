@@ -12,6 +12,11 @@
         android:showAsAction="always"
         android:title="@string/menu_action_groups_list_title"/>
     <item
+        android:id="@+id/menu_action_history"
+        android:icon="@drawable/ic_action_recent_history"
+        android:showAsAction="always"
+        android:title="@string/menu_action_recent_history_title"/>
+    <item
         android:id="@+id/menu_action_send_message"
         android:icon="@drawable/ic_send"
         android:showAsAction="always"

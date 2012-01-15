@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <CheckBox
+            android:id="@+id/compose_message_checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <QuickContactBadge
+            android:id="@+id/compose_message_quickContactBadge"
+            style="?android:attr/quickContactBadgeStyleWindowMedium"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/quickContactMargin"
+            android:src="@drawable/ic_contact_picture_holo_dark" />
+
+        <TextView
+            android:id="@+id/compose_message_to_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dip"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/compose_message_addressRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip" >
+    </RadioGroup>
+
+    <org.drykiss.android.app.limecube.widget.SmsEditWidget
+        android:id="@+id/compose_message_to_textEditWidget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" />
+
+</LinearLayout>

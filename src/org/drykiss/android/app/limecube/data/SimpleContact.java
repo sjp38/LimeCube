@@ -26,11 +26,15 @@ public class SimpleContact {
         mName = name;
         mPhotoId = photoId;
     }
-    
+
+    public byte[] getPhoto() {
+        return mPhoto;
+    }
+
     public void setPhoto(byte[] photo) {
         mPhoto = photo;
     }
-    
+
     public void setNumbers(ArrayList<String> phoneNumbers) {
         mPhoneNumbers = phoneNumbers;
     }

@@ -2,17 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_action_skip_this_number"
-        android:icon="@drawable/ic_skip"
-        android:orderInCategory="0"
+        android:id="@+id/menu_action_send_message"
+        android:icon="@drawable/ic_send"
         android:showAsAction="always"
-        android:title="@string/menu_action_skip_this_number_title"/>
-    
-    <item
-        android:id="@+id/menu_action_compose_later"
-        android:icon="@drawable/ic_later"
-        android:orderInCategory="0"
-        android:showAsAction="always"
-        android:title="@string/menu_action_compose_later_title"/>
+        android:title="@string/menu_action_send_message_title"/>
 
 </menu>

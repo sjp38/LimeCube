@@ -242,7 +242,6 @@ public class ContactsManager {
                 }
             }
         }
-
     }
 
     private void notifyListeners() {

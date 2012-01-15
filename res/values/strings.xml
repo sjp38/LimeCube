@@ -18,7 +18,9 @@
     <string name="menu_action_compose_later_title">Compose later</string>
     <string name="menu_action_contacts_list_title">Contacts list</string>
     <string name="menu_action_groups_list_title">Groups list</string>
+    <string name="menu_action_recent_history_title">Recent history.</string>
     <string name="in_group">In <xliff:g id="group_member_count">%s</xliff:g> group</string>
+    <string name="warning_bulk_transfer">"Will send messages to all checked contacts automatically.\nBut, in some devices(such as sky Vega), it can works weird because of manufacure's customed rom.\nMessage log will now show on your phone's default Messaging application. You can see logs on this application's history screen.\nMake some test before use this feature."</string>
 
     <string-array name="default_suggestions">
         <item>Hello \\_NAME, How are you?</item>
@@ -39,6 +41,14 @@
     <string name="failed_to_update_suggestion">Failed to edit. Maybe same suggestion already exist.</string>
     <string name="failed_to_add_suggestion">Failed to add. Maybe same suggestion already exist.</string>
     <string name="menu_action_add_suggestion_title">Add suggestion</string>
+
+    <string name="historyActivityLabel">History</string>
+    <string name="history_message_sent">Message sent.</string>
+    <string name="history_failed_to_send_message">Failed to send message.</string>
     
+    <string-array name="history_menu">
+        <item>Remove this log</item>
+        <item>Send this message again</item>
+    </string-array>
 
 </resources>
