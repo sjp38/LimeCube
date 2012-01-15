@@ -74,7 +74,7 @@ public class ContactsListAdapter extends AbstractCheckableAdapter {
         quickContact.assignContactUri(Contacts.getLookupUri(contact.mId,
                 contact.mLookupKey));
 
-        final byte[] data = contact.mPhoto;
+        final byte[] data = DataManager.getInstance().getContactPhoto(contact.mId, contact.mPhotoId);
         if (data != null) {
             try {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,

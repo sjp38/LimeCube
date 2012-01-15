@@ -72,11 +72,6 @@ public class ContactsManager {
     OnPhotoLoadedListener mPhotoLoadedListener = new OnPhotoLoadedListener() {
         @Override
         public void onPhotoLoaded(long contactId, byte[] photo) {
-            final SimpleContact contact = getContact(contactId);
-            if (contact == null) {
-                return;
-            }
-            contact.setPhoto(photo);
             notifyListeners();
         }
     };
@@ -147,8 +142,11 @@ public class ContactsManager {
             }
             contact = mContacts.get(position);
         }
-        contact.setPhoto(mContactsPhotoManager.get(contact.mId, contact.mPhotoId));
         return contact;
+    }
+
+    public byte[] getContactPhoto(long contactId, long photoId) {
+        return mContactsPhotoManager.get(contactId, photoId);
     }
 
     public int getContactsCount() {

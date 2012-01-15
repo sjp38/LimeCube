@@ -21,8 +21,8 @@ import java.util.Set;
  * @author sj38_park
  */
 public class ContactsPhotoManager implements Callback {
-    private final static int CACHE_MAX_SIZE = 100;
-    private final static int CACHE_CLEAR_SIZE = 30;
+    private final static int CACHE_MAX_SIZE = 150;
+    private final static int CACHE_CLEAR_SIZE = 45;
     private ArrayList<Request> mRequests = new ArrayList<Request>();
     private HashMap<Long, PhotoHolder> mCache = new HashMap<Long, PhotoHolder>();
     private ArrayList<Long> mFlushCandidates = new ArrayList<Long>();

@@ -170,7 +170,7 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
 
         final QuickContactBadge quickContact = viewHolder.mQuickContactBadge;
         quickContact.assignContactUri(Contacts.getLookupUri(contact.mId, contact.mLookupKey));
-        final byte[] data = contact.getPhoto();
+        final byte[] data = DataManager.getInstance().getContactPhoto(contact.mId, contact.mPhotoId);
         if (data != null) {
             try {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);

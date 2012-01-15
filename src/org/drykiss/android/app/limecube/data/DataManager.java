@@ -85,6 +85,10 @@ public class DataManager {
         return mContactsManager.get(position);
     }
 
+    public byte[] getContactPhoto(long contactId, long photoId) {
+        return mContactsManager.getContactPhoto(contactId, photoId);
+    }
+
     public int getContactsCount() {
         if (mContactsManager == null) {
             return 0;
