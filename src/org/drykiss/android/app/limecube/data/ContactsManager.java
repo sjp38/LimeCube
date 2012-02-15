@@ -24,7 +24,6 @@ import java.util.HashMap;
  * @author sj38_park
  */
 public class ContactsManager {
-    private static final String TAG = "ContactsManager";
     private static final Uri CONTACTS_URI = ContactsContract.Contacts.CONTENT_URI;
     private static final String[] SIMPLE_CONTACT_PROJECTION = new String[] {
             ContactsContract.Contacts._ID,
@@ -64,7 +63,7 @@ public class ContactsManager {
     private ContactsQueryHandler mQueryHandler = null;
     private ContactsPhotoManager mContactsPhotoManager = null;
 
-    private ArrayList<OnContactsDataChangedListener> mListeners = new ArrayList<OnContactsDataChangedListener>();
+    private OnContactsDataChangedListener mListener = null;
 
     private Context mContext;
     private long mGroupId = -1;
@@ -72,6 +71,12 @@ public class ContactsManager {
     OnPhotoLoadedListener mPhotoLoadedListener = new OnPhotoLoadedListener() {
         @Override
         public void onPhotoLoaded(long contactId, byte[] photo) {
+            // Do nothing now. This can be used later for high performance.
+            return;
+        }
+
+        @Override
+        public void onAllRequestedPhotoLoaded() {
             notifyListeners();
         }
     };
@@ -111,7 +116,7 @@ public class ContactsManager {
     }
 
     public void setOnContactsDataChangedListener(OnContactsDataChangedListener listener) {
-        mListeners.add(listener);
+        mListener = listener;
     }
 
     public void startLoading(long groupId) {
@@ -243,8 +248,8 @@ public class ContactsManager {
     }
 
     private void notifyListeners() {
-        for (OnContactsDataChangedListener listener : mListeners) {
-            listener.onContactsDataChanged();
+        if (mListener != null) {
+            mListener.onContactsDataChanged();
         }
     }
 

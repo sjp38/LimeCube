@@ -10,10 +10,8 @@ import android.os.Message;
 import android.provider.ContactsContract.Contacts.Photo;
 import android.provider.ContactsContract.Data;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class ContactsPhotoManager implements Callback {
     private final static int CACHE_MAX_SIZE = 150;
@@ -26,6 +24,7 @@ public class ContactsPhotoManager implements Callback {
     private PhotoLoaderThread mLoaderThread = null;
     private final Handler mMainThreadHandler = new Handler(this);
     private static final int MESSAGE_PHOTO_LOADED = 2;
+    private static final int MESSAGE_PHOTO_LOADED_ALL = 3;
 
     public void setOnPhotoLoadedListener(OnPhotoLoadedListener listener) {
         mListener = listener;
@@ -33,10 +32,13 @@ public class ContactsPhotoManager implements Callback {
 
     private void notifyPhotoLoaded(PhotoHolder holder) {
         if (mListener != null) {
-            final byte[] photo = holder.mPhoto.get();
-            if (photo != null) {
-                mListener.onPhotoLoaded(holder.mContactId, photo);
-            }
+            mListener.onPhotoLoaded(holder.mContactId, holder.mPhoto);
+        }
+    }
+
+    private void notifyPhotoLoadedAll() {
+        if (mListener != null) {
+            mListener.onAllRequestedPhotoLoaded();
         }
     }
 
@@ -50,14 +52,14 @@ public class ContactsPhotoManager implements Callback {
         }
         PhotoHolder holder = mCache.get(contactId);
         if (holder != null) {
-            final byte[] photo = holder.mPhoto.get();
-            if (photo != null) {
-                return photo;
-            } else {
-                mCache.remove(contactId);
-            }
+            return holder.mPhoto;
         }
-        mRequests.add(new Request(contactId, photoId));
+        final Request request = new Request(contactId, photoId);
+        if (mRequests.contains(request)) {
+            return null;
+        }
+
+        mRequests.add(request);
         if (mLoaderThread == null) {
             mLoaderThread = new PhotoLoaderThread();
             mLoaderThread.start();
@@ -74,27 +76,60 @@ public class ContactsPhotoManager implements Callback {
             mContactId = contactId;
             mPhotoId = photoId;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + (int) (mContactId ^ (mContactId >>> 32));
+            result = prime * result + (int) (mPhotoId ^ (mPhotoId >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Request other = (Request) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (mContactId != other.mContactId)
+                return false;
+            if (mPhotoId != other.mPhotoId)
+                return false;
+            return true;
+        }
+
+        private ContactsPhotoManager getOuterType() {
+            return ContactsPhotoManager.this;
+        }
     }
 
     private class PhotoHolder {
-        public WeakReference<byte[]> mPhoto;
+        public byte[] mPhoto;
         public long mContactId;
 
         public PhotoHolder(byte[] photo, long contactId) {
-            mPhoto = new WeakReference<byte[]>(photo);
+            mPhoto = photo;
             mContactId = contactId;
         }
     }
 
     private class PhotoLoaderThread extends HandlerThread implements Callback {
         private static final int MESSAGE_LOAD_PHOTO = 1;
+        // When all request complete, wait this mili-seconds before notice.
+        private static final int ALL_REQUEST_LOADED_NOTICE_DELAY = 300;
         private boolean mLoading = false;
         private Handler mLoaderThreadHandler;
         private static final String PHOTO_LOADER_THREAD_NAME = "ContactsPhotoLoader";
 
         public PhotoLoaderThread() {
             super(PHOTO_LOADER_THREAD_NAME);
-            // TODO Auto-generated constructor stub
         }
 
         public void requestLoading() {
@@ -138,6 +173,9 @@ public class ContactsPhotoManager implements Callback {
                 }
                 byte[] photo = cursor.getBlob(0);
                 cursor.close();
+                if (photo == null) {
+                    continue;
+                }
                 final PhotoHolder photoHolder = new PhotoHolder(photo, contactId);
                 mCache.put(contactId, photoHolder);
                 if (!mFlushCandidates.contains(contactId)) {
@@ -155,11 +193,25 @@ public class ContactsPhotoManager implements Callback {
                 mMainThreadHandler.sendMessage(msg);
             }
             mLoading = false;
+            mMainThreadHandler.removeMessages(MESSAGE_PHOTO_LOADED_ALL);
+            mMainThreadHandler.sendEmptyMessageDelayed(MESSAGE_PHOTO_LOADED_ALL,
+                    ALL_REQUEST_LOADED_NOTICE_DELAY);
         }
     }
 
     public interface OnPhotoLoadedListener {
+        /**
+         * Called every time photo loaded.
+         * 
+         * @param contactId Loaded photo's contact id.
+         * @param photo Loaded photo in bitmap.
+         */
         public void onPhotoLoaded(long contactId, byte[] photo);
+
+        /**
+         * Called when every requested photo loaded.
+         */
+        public void onAllRequestedPhotoLoaded();
     }
 
     @Override
@@ -167,8 +219,12 @@ public class ContactsPhotoManager implements Callback {
         switch (msg.what) {
             case MESSAGE_PHOTO_LOADED:
                 notifyPhotoLoaded((PhotoHolder) msg.obj);
+                break;
+            case MESSAGE_PHOTO_LOADED_ALL:
+                notifyPhotoLoadedAll();
+            default:
+                break;
         }
-        // TODO Auto-generated method stub
         return false;
     }
 }
