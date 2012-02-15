@@ -15,11 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-/**
- * We should use cache. But, first, start with brute force.
- * 
- * @author sj38_park
- */
 public class ContactsPhotoManager implements Callback {
     private final static int CACHE_MAX_SIZE = 150;
     private final static int CACHE_CLEAR_SIZE = 45;
