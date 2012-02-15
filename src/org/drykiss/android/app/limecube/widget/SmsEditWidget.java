@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.drykiss.android.app.limecube.R;
 
@@ -21,6 +20,7 @@ public class SmsEditWidget extends LinearLayout implements TextWatcher {
     private EditText mSmsEditText;
     private ImageButton mMenuButton;
     private ImageButton mSendButton;
+    private boolean mTextChanged = false;
 
     public SmsEditWidget(Context context) {
         super(context);
@@ -40,7 +40,6 @@ public class SmsEditWidget extends LinearLayout implements TextWatcher {
         mSmsEditText = (EditText) findViewById(R.id.sms_editText);
         mMenuButton = (ImageButton) findViewById(R.id.sms_edit_menu_button);
         mSendButton = (ImageButton) findViewById(R.id.sms_send_button);
-        
 
         mSmsEditText.addTextChangedListener(this);
         InputFilter[] filterArray = new InputFilter[1];
@@ -48,11 +47,11 @@ public class SmsEditWidget extends LinearLayout implements TextWatcher {
         mSmsEditText.setFilters(filterArray);
         mSendButton.setEnabled(false);
     }
-    
+
     public void setSendButtonListener(View.OnClickListener listener) {
         mSendButton.setOnClickListener(listener);
     }
-    
+
     public void setMenuButtonListener(View.OnClickListener listener) {
         mMenuButton.setOnClickListener(listener);
     }
@@ -60,16 +59,32 @@ public class SmsEditWidget extends LinearLayout implements TextWatcher {
     public void setText(String text) {
         mSmsEditText.setText(text);
     }
-    
+
     public void addText(String text) {
         final int selectionEnd = mSmsEditText.getSelectionEnd();
-        mSmsEditText.getText().replace(selectionEnd,  selectionEnd, text);
+        mSmsEditText.getText().replace(selectionEnd, selectionEnd, text);
         final int newCursorPosition = selectionEnd + text.length();
         mSmsEditText.setSelection(newCursorPosition, newCursorPosition);
     }
 
     public Editable getText() {
         return mSmsEditText.getText();
+    }
+
+    public void setOnEditTextFocusChangeListener(View.OnFocusChangeListener listener) {
+        mSmsEditText.setOnFocusChangeListener(listener);
+    }
+
+    public void setEditTextFocus() {
+        mSmsEditText.requestFocus();
+    }
+
+    public boolean textChanged() {
+        return mTextChanged;
+    }
+
+    public void setTextChangedListeningClear() {
+        mTextChanged = false;
     }
 
     @Override
@@ -84,8 +99,10 @@ public class SmsEditWidget extends LinearLayout implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         final int currentLength = mSmsEditText.getText().toString().length();
         if (currentLength > 0) {
+            mTextChanged = true;
             mSendButton.setEnabled(true);
         } else {
+            mTextChanged = false;
             mSendButton.setEnabled(false);
         }
     }

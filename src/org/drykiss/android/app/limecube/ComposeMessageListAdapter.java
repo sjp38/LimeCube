@@ -35,6 +35,7 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
     private ArrayList<ComposeMessageItem> mItems = new ArrayList<ComposeMessageItem>();
     private Integer[] mTargets;
     private int mSuggestionWaiting;
+    private int mLastFocusedInputText = -1;
 
     CompoundButton.OnCheckedChangeListener mContactCheckedChangedListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
@@ -152,6 +153,21 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
             smsEditWidget.setSendButtonListener(mOnSendButtonClickListener);
             smsEditWidget.setMenuButtonListener(mOnMenuButtonClickListener);
 
+            smsEditWidget
+                    .setOnEditTextFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            View parent = (View) v.getParent();
+                            parent = (View) parent.getParent();
+                            parent = (View) parent.getParent();
+                            final ComposeMessageItemViewHolder holder = (ComposeMessageItemViewHolder) parent
+                                    .getTag();
+                            if (hasFocus) {
+                                mLastFocusedInputText = holder.mPosition;
+                            }
+                        }
+                    });
+
             viewHolder = new ComposeMessageItemViewHolder(checkBox, badge, name, addressRadioGroup,
                     smsEditWidget);
             convertView.setTag(viewHolder);
@@ -170,7 +186,8 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
 
         final QuickContactBadge quickContact = viewHolder.mQuickContactBadge;
         quickContact.assignContactUri(Contacts.getLookupUri(contact.mId, contact.mLookupKey));
-        final byte[] data = DataManager.getInstance().getContactPhoto(contact.mId, contact.mPhotoId);
+        final byte[] data = DataManager.getInstance()
+                .getContactPhoto(contact.mId, contact.mPhotoId);
         if (data != null) {
             try {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -218,6 +235,9 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
 
         viewHolder.mSmsEditWidget.setText(item.mMessage);
 
+        if (position == mLastFocusedInputText) {
+            viewHolder.mSmsEditWidget.setEditTextFocus();
+        }
         return convertView;
     }
 
@@ -268,8 +288,8 @@ public class ComposeMessageListAdapter extends AbstractCheckableAdapter {
 
                 final Cursor phones = mContext.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " +
-                                contact.mId, null, null);
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contact.mId,
+                        null, null);
                 final ArrayList<String> numbers = new ArrayList<String>();
                 while (phones.moveToNext()) {
                     numbers.add(phones.getString(phones

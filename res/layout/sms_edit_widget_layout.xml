@@ -8,13 +8,10 @@
         android:id="@+id/sms_editText"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"        
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:singleLine="false"
-        android:hint="@string/hint_sms_edit_text" >
-
-        <requestFocus>
-        </requestFocus>
+        android:hint="@string/hint_sms_edit_text"
+        android:singleLine="false" >
     </EditText>
 
     <LinearLayout
