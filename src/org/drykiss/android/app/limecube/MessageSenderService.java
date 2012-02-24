@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.drykiss.android.app.limecube.data.DataManager;
 import org.drykiss.android.app.limecube.data.History;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MessageSenderService extends Service {
+    private static final String TAG = "LimeCube_MessageSender";
     private static final String ACTION_SMS_SENT = "org.drykiss.android.app.limecube.sms_sent";
 
     private Object[] mTargetNames = null;
@@ -101,7 +103,7 @@ public class MessageSenderService extends Service {
     }
 
     private void sendSms() {
-        if (TextUtils.isEmpty((String)mTargetNumbers[mCurrentSending])) {
+        if (TextUtils.isEmpty((String) mTargetNumbers[mCurrentSending])) {
             sendNextMessage();
             return;
         }
@@ -109,9 +111,32 @@ public class MessageSenderService extends Service {
         ArrayList<String> messages = manager
                 .divideMessage((String) mTargetMessages[mCurrentSending]);
         for (String splittedMsg : messages) {
-            manager.sendTextMessage((String) mTargetNumbers[mCurrentSending], null, splittedMsg,
-                    PendingIntent.getBroadcast(this, 0, new Intent(ACTION_SMS_SENT), 0), null);
+            try {
+                manager.sendTextMessage((String) mTargetNumbers[mCurrentSending], null,
+                        splittedMsg,
+                        PendingIntent.getBroadcast(this, 0, new Intent(ACTION_SMS_SENT), 0), null);
+            } catch (SecurityException e) {
+                Log.e(TAG, "Maybe manufacturer modified security in wrong way!", e);
+            } catch (NullPointerException e) {
+                Log.d(TAG, "Maybe framework's fault. try again.", e);
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException interruptException) {
+                    Log.d(TAG, "Failed to sleep for one more try. Do it now.");
+                }
+                try {
+                    manager.sendTextMessage((String) mTargetNumbers[mCurrentSending], null,
+                            splittedMsg,
+                            PendingIntent.getBroadcast(this, 0, new Intent(ACTION_SMS_SENT), 0),
+                            null);
+                } catch (NullPointerException secondException) {
+                    Log.e(TAG, "Maybe framework's fault. show erro message to user.",
+                            secondException);
+                    final String msg = getString(R.string.error_can_not_send_message,
+                            mTargetNumbers[mCurrentSending], splittedMsg);
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
-
 }

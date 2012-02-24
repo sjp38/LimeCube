@@ -51,6 +51,8 @@
     <string name="historyActivityLabel">기록</string>
     <string name="history_message_sent">전송 성공.</string>
     <string name="history_failed_to_send_message">전송 실패.</string>
+
+    <string name="error_can_not_send_message">메세지 \"<xliff:g id="msg_content">%s</xliff:g>\"를 <xliff:g id="msg_target_address">%s</xliff:g>에게 보내는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</string>
     
     <string-array name="history_menu">
         <item>기록 삭제</item>
