@@ -157,6 +157,9 @@ public class ContactsPhotoManager implements Callback {
                     .getContentResolver();
             while (mRequests.size() != 0) {
                 Request request = mRequests.get(0);
+                if (request == null) {
+                    break;
+                }
                 final long contactId = request.mContactId;
                 final long photoId = request.mPhotoId;
                 mRequests.remove(request);

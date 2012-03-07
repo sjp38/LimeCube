@@ -99,12 +99,12 @@ public class MessageSenderService extends Service {
         mTargetNames = (Object[]) bundle.get(ComposeMessageActivity.COMPOSE_MSG_EXTRA_NAME);
         mTargetNumbers = (Object[]) bundle.get(ComposeMessageActivity.COMPOSE_MSG_EXTRA_NUMBER);
         mTargetMessages = (Object[]) bundle.get(ComposeMessageActivity.COMPOSE_MSG_EXTRA_MESSAGE);
-        sendSms();
+        mCurrentSending = -1;
+        sendNextMessage();
     }
 
     private void sendSms() {
         if (TextUtils.isEmpty((String) mTargetNumbers[mCurrentSending])) {
-            sendNextMessage();
             return;
         }
         final SmsManager manager = SmsManager.getDefault();
